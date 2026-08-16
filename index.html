@@ -96,6 +96,19 @@
         .form-group label { display: block; font-size: 11px; margin-bottom: 6px; color: var(--rose-main); font-weight: 700; }
         .modal-box input, .modal-box select, .modal-box textarea { width: 100%; padding: 11px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 11px; outline: none; background: #FFF; }
 
+        /* Cart Interactive Controls */
+        .cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--border-color); gap: 10px; }
+        .cart-item-info { flex: 1; text-align: right; }
+        .cart-item-title { font-size: 12px; font-weight: 700; color: var(--text-main); }
+        .cart-item-price { font-size: 11px; font-weight: 800; color: var(--rose-main); margin-top: 2px; }
+        .cart-qty-controls { display: flex; align-items: center; gap: 6px; background: var(--bg-body); border-radius: 20px; padding: 2px 8px; border: 1px solid var(--border-color); }
+        .cart-btn-qty { background: none; border: none; color: var(--rose-main); font-size: 13px; font-weight: bold; cursor: pointer; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+        .cart-btn-qty:hover { color: var(--rose-dark); }
+        .cart-qty-num { font-size: 11px; font-weight: 700; min-width: 16px; text-align: center; }
+        .cart-btn-del { color: #d9534f; cursor: pointer; font-size: 14px; margin-right: 4px; border: none; background: none; }
+        .cart-summary-box { background: rgba(140, 42, 72, 0.04); border-radius: 12px; padding: 12px; margin: 15px 0; border: 1px solid var(--border-color); font-size: 12px; }
+        .cart-summary-line { display: flex; justify-content: space-between; margin-bottom: 6px; }
+
         /* Pass Change Section Inside Modal */
         .pass-change-box { background: rgba(140, 42, 72, 0.04); border: 1px dashed var(--rose-main); border-radius: 12px; padding: 12px; margin-top: 18px; }
         .pass-change-box summary { font-size: 11px; font-weight: 700; color: var(--rose-dark); cursor: pointer; outline: none; }
@@ -270,9 +283,12 @@
     <div class="modal-overlay" id="cart-modal">
         <div class="modal-box">
             <span class="close-modal" onclick="closeModal('cart-modal')">&times;</span>
-            <h3 style="text-align:center; color:var(--rose-dark); margin-bottom:18px; font-family:'Cinzel', serif;">حقيبة التسوق</h3>
-            <div id="cart-items" style="max-height:180px; overflow-y:auto; margin-bottom:15px; font-size:12px;"></div>
+            <h3 style="text-align:center; color:var(--rose-dark); margin-bottom:15px; font-family:'Cinzel', serif;">حقيبة التسوق</h3>
             
+            <div id="cart-items" style="max-height:200px; overflow-y:auto; margin-bottom:10px;"></div>
+            
+            <div id="cart-summary" class="cart-summary-box"></div>
+
             <div class="form-group">
                 <input type="text" id="cust-name" placeholder="الاسم الكامل">
             </div>
@@ -280,7 +296,7 @@
                 <input type="text" id="cust-phone" placeholder="رقم الهاتف للتواصل">
             </div>
             <div class="form-group">
-                <select id="cust-city">
+                <select id="cust-city" onchange="renderCartItems()">
                     <option value="3000">بغداد (توصيل: 3,000 د.ع)</option>
                     <option value="5000">كافة المحافظات (توصيل: 5,000 د.ع)</option>
                 </select>
@@ -289,7 +305,7 @@
                 <input type="text" id="cust-address" placeholder="العنوان التفصيلي (المحافظة / المنطقة)">
             </div>
 
-            <button onclick="sendCartToWhatsApp()" style="background:#25D366; color:#FFF; border:none; padding:12px; width:100%; font-weight:bold; cursor:pointer; font-size:12px; border-radius:10px;"><i class="fa-brands fa-whatsapp"></i> تأكيد وإرسال الطلب عبر الواتساب</button>
+            <button onclick="sendCartToWhatsApp()" style="background:#25D366; color:#FFF; border:none; padding:12px; width:100%; font-weight:bold; cursor:pointer; font-size:12px; border-radius:10px; margin-top:5px;"><i class="fa-brands fa-whatsapp"></i> تأكيد وإرسال الطلب عبر الواتساب</button>
         </div>
     </div>
 
@@ -328,18 +344,14 @@
 
     <!-- JavaScript logic -->
     <script>
-        const defaultProducts = [
-            { id: '1', name: 'عطر نرجس الملكي', price: 25000, category: 'عطور', image_url: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=400', video_url: '' },
-            { id: '2', name: 'كوب ايس كوفي زجاجي', price: 10000, category: 'ايس كوفي', image_url: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=400', video_url: '' },
-            { id: '3', name: 'أحمر شفاه فاخر', price: 8000, category: 'مكياج', image_url: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=400', video_url: '' }
-        ];
+        // تم تفريغ المنتجات الافتراضية هنا
+        const defaultProducts = [];
 
         let products = JSON.parse(localStorage.getItem('nargsa_products')) || defaultProducts;
         let cart = JSON.parse(localStorage.getItem('nargsa_cart')) || [];
         let currentCategory = 'الكل';
         let searchQuery = '';
 
-        // جلب الرمز المحفوظ أو استخدام الرمز الافتراضي 7890
         function getAdminPass() {
             return localStorage.getItem('nargsa_admin_pass') || '7890';
         }
@@ -397,13 +409,74 @@
             const prod = products.find(p => p.id == id);
             const existing = cart.find(i => i.id == id);
             if (existing) existing.qty += qty; else cart.push({ ...prod, qty: qty });
+            saveCart();
+            alert('✨ تمت إضافة المنتج بنجاح لحقيبة التسوق!');
+        }
+
+        function updateCartQty(id, delta) {
+            const item = cart.find(i => i.id == id);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                removeFromCart(id);
+            } else {
+                saveCart();
+                renderCartItems();
+            }
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id != id);
+            saveCart();
+            renderCartItems();
+        }
+
+        function saveCart() {
             localStorage.setItem('nargsa_cart', JSON.stringify(cart));
             updateCartCount();
-            alert('✨ تمت إضافة المنتج بنجاح لحقيبة التسوق!');
         }
 
         function updateCartCount() {
             document.getElementById('cart-count').innerText = cart.reduce((a, b) => a + b.qty, 0);
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cart-items');
+            const summaryBox = document.getElementById('cart-summary');
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:var(--text-sub); padding:15px 0;">حقيبة التسوق فارغة حالياً</p>';
+                summaryBox.style.display = 'none';
+                return;
+            }
+
+            summaryBox.style.display = 'block';
+            container.innerHTML = cart.map(i => `
+                <div class="cart-item-row">
+                    <button class="cart-btn-del" onclick="removeFromCart('${i.id}')" title="حذف"><i class="fa-solid fa-trash-can"></i></button>
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${i.name}</div>
+                        <div class="cart-item-price">${Number(i.price * i.qty).toLocaleString()} د.ع</div>
+                    </div>
+                    <div class="cart-qty-controls">
+                        <button class="cart-btn-qty" onclick="updateCartQty('${i.id}', 1)">+</button>
+                        <span class="cart-qty-num">${i.qty}</span>
+                        <button class="cart-btn-qty" onclick="updateCartQty('${i.id}', -1)">-</button>
+                    </div>
+                </div>
+            `).join('');
+
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let deliveryFee = Number(document.getElementById('cust-city').value || 3000);
+            let total = subtotal + deliveryFee;
+
+            summaryBox.innerHTML = `
+                <div class="cart-summary-line"><span>المجموع الفرعي:</span> <strong>${subtotal.toLocaleString()} د.ع</strong></div>
+                <div class="cart-summary-line"><span>أجور التوصيل:</span> <strong>${deliveryFee.toLocaleString()} د.ع</strong></div>
+                <div class="cart-summary-line" style="margin-bottom:0; color:var(--rose-main); font-size:13px; font-weight:800; border-top:1px solid var(--border-color); padding-top:6px;">
+                    <span>الإجمالي الكلي:</span> <span>${total.toLocaleString()} د.ع</span>
+                </div>
+            `;
         }
 
         function openProductDetail(id) {
@@ -465,15 +538,8 @@
             const imgFile = document.getElementById('add-p-file').files[0];
             const videoFile = document.getElementById('add-p-video-file').files[0];
 
-            if (pass !== getAdminPass()) {
-                alert('رمز الدخول غير صحيح!');
-                return;
-            }
-
-            if (!name || !price) {
-                alert('يرجى ملء الاسم والسعر على الأقل.');
-                return;
-            }
+            if (pass !== getAdminPass()) { alert('رمز الدخول غير صحيح!'); return; }
+            if (!name || !price) { alert('يرجى ملء الاسم والسعر على الأقل.'); return; }
 
             const readMedia = (file) => {
                 return new Promise((resolve) => {
@@ -513,7 +579,6 @@
             });
         }
 
-        // دالة تغيير رمز الإدارة
         function changeAdminPassword() {
             const currentPassInput = document.getElementById('admin-pass').value;
             const newPassInput = document.getElementById('new-admin-pass').value;
@@ -551,20 +616,6 @@
             const modal = document.getElementById('cart-modal');
             modal.classList.toggle('active');
             if (modal.classList.contains('active')) renderCartItems();
-        }
-
-        function renderCartItems() {
-            const container = document.getElementById('cart-items');
-            if (cart.length === 0) { container.innerHTML = '<p style="text-align:center; color:var(--text-sub);">حقيبة التسوق فارغة حالياً</p>'; return; }
-            container.innerHTML = cart.map(i => `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:6px;">
-                    <div>
-                        <div style="font-weight:600;">${i.name}</div>
-                        <div style="font-size:10px; color:var(--text-sub);">الكمية: ${i.qty}</div>
-                    </div>
-                    <div style="font-weight:700; color:var(--rose-main);">${Number(i.price * i.qty).toLocaleString()} د.ع</div>
-                </div>
-            `).join('');
         }
 
         function sendCartToWhatsApp() {
