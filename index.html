@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nargsa Store | Haute Beauté & Lifestyle</title>
+    
+    <!-- Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-body: #FAF5F6;          
+            --bg-card: #FFFFFF;          
+            --rose-dark: #4A1A2C;      
+            --rose-main: #8C2A48;      
+            --accent-pink: #E8A5B8;
+            --accent-gold: #D4AF37;      
+            --border-color: rgba(140, 42, 72, 0.15);
+            --text-main: #2A121A;        
+            --text-sub: #6E535C;         
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --shadow-subtle: 0 8px 25px rgba(74, 26, 44, 0.05);
+            --shadow-hover: 0 14px 30px rgba(74, 26, 44, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        body { background-color: var(--bg-body); color: var(--text-main); direction: rtl; overflow-x: hidden; }
+
+        /* Announcement Bar */
+        .top-bar { background: var(--rose-dark); color: #FFF; text-align: center; padding: 6px 10px; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; }
+
+        /* Header Layout */
+        header { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 16px 24px; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border-color); }
+        .header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .header-icons { display: flex; gap: 18px; align-items: center; }
+        .header-icons i { font-size: 19px; color: var(--rose-main); cursor: pointer; }
+        .header-icons i:hover { color: var(--rose-dark); transform: scale(1.1); }
+
+        .cart-icon-wrap { position: relative; cursor: pointer; }
+        .badge { position: absolute; top: -6px; right: -8px; background: var(--rose-main); color: #FFF; font-size: 9px; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-weight: 700; border: 2px solid var(--bg-body); }
+
+        .logo-box { text-align: center; cursor: pointer; }
+        .logo-text h1 { font-family: 'Cinzel', serif; font-size: 24px; letter-spacing: 2px; color: var(--rose-dark); font-weight: 800; text-transform: uppercase; }
+        .logo-text span { font-size: 9px; letter-spacing: 4px; color: var(--rose-main); display: block; text-transform: uppercase; margin-top: -2px; font-weight: 600; }
+
+        .nav-search-bar { max-width: 480px; margin: 14px auto 0 auto; }
+        .search-input { width: 100%; padding: 10px 22px; background: #FFF; border: 1px solid var(--border-color); border-radius: 30px; color: var(--text-main); font-size: 12px; outline: none; }
+        .search-input:focus { border-color: var(--rose-main); box-shadow: var(--shadow-subtle); }
+
+        /* Hero Banner */
+        .hero { height: 340px; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; background: linear-gradient(180deg, rgba(250,245,246,0.3) 0%, var(--bg-body) 100%), url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200') center/cover; margin-bottom: 30px; }
+        .hero-title { font-family: 'Cinzel', serif; font-size: 42px; color: var(--rose-dark); margin-bottom: 8px; font-weight: 800; }
+        .btn-shop { background: var(--rose-main); color: #FFF; border: none; padding: 12px 38px; font-size: 12px; border-radius: 30px; cursor: pointer; font-weight: 700; }
+        .btn-shop:hover { background: var(--rose-dark); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+
+        /* Categories Bar */
+        .categories-section { max-width: 1200px; margin: 0 auto 35px auto; padding: 0 20px; text-align: center; }
+        .categories-grid { display: flex; justify-content: center; gap: 18px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .categories-grid::-webkit-scrollbar { display: none; }
+        .category-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; min-width: 65px; }
+        .category-icon { width: 62px; height: 62px; border-radius: 50%; background: #FFF; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--rose-main); font-size: 20px; box-shadow: var(--shadow-subtle); }
+        .category-item:hover .category-icon, .category-item.active .category-icon { background: var(--rose-main); color: #FFF; border-color: var(--rose-main); transform: translateY(-4px); }
+        .category-name { font-size: 11px; color: var(--text-main); font-weight: 600; }
+
+        /* Products Grid */
+        .products-section { max-width: 1200px; margin: 0 auto 60px auto; padding: 0 20px; }
+        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        @media (min-width: 768px) { .products-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        .product-card { background: var(--bg-card); border-radius: 18px; padding: 14px; border: 1px solid var(--border-color); position: relative; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-subtle); }
+        .product-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); }
+        .product-img-wrap { width: 100%; height: 210px; border-radius: 14px; overflow: hidden; margin-bottom: 12px; cursor: pointer; position: relative; }
+        .product-img { width: 100%; height: 100%; object-fit: cover; }
+        .product-card:hover .product-img { transform: scale(1.08); }
+
+        .video-badge { position: absolute; top: 10px; left: 10px; background: rgba(140, 42, 72, 0.85); color: #FFF; font-size: 9px; padding: 4px 8px; border-radius: 20px; font-weight: bold; }
+        .product-badge { position: absolute; top: 10px; right: 10px; background: var(--rose-dark); color: #FFF; font-size: 9px; padding: 4px 8px; border-radius: 20px; backdrop-filter: blur(5px); font-weight: 500; }
+        .product-name { font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text-main); cursor: pointer; }
+        .product-price { font-size: 14px; font-weight: 800; color: var(--rose-main); margin-bottom: 12px; }
+        
+        .card-actions { display: flex; gap: 8px; }
+        .btn-add-cart { flex: 1; padding: 10px 0; border-radius: 10px; font-size: 11px; background: rgba(140, 42, 72, 0.08); color: var(--rose-main); border: 1px solid var(--border-color); cursor: pointer; font-weight: 700; }
+        .btn-add-cart:hover { background: var(--rose-main); color: #FFF; }
+        .btn-edit-prod { width: 36px; border-radius: 10px; background: #FFF; border: 1px solid var(--border-color); color: var(--rose-main); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-edit-prod:hover { background: var(--rose-main); color: #FFF; }
+
+        /* Modals Overlay */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(42, 18, 26, 0.6); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: var(--bg-card); border-radius: 22px; padding: 30px; width: 100%; max-width: 480px; position: relative; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border-color); box-shadow: var(--shadow-hover); }
+        .close-modal { position: absolute; top: 18px; left: 22px; font-size: 22px; cursor: pointer; color: var(--text-sub); }
+
+        .form-group { margin-bottom: 14px; text-align: right; }
+        .form-group label { display: block; font-size: 11px; margin-bottom: 6px; color: var(--rose-main); font-weight: 700; }
+        .modal-box input, .modal-box select, .modal-box textarea { width: 100%; padding: 11px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 11px; outline: none; background: #FFF; }
+
+        /* Footer Style */
+        .main-footer { background: #FFF; border-top: 1px solid var(--border-color); padding: 45px 20px 20px 20px; margin-top: 60px; }
+        .footer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(1, 1fr); gap: 30px; text-align: center; }
+        @media (min-width: 768px) { .footer-container { grid-template-columns: 2fr 1fr 1fr; text-align: right; } }
+
+        .footer-brand h2 { font-family: 'Cinzel', serif; font-size: 24px; color: var(--rose-dark); margin-bottom: 10px; font-weight: 800; }
+        .footer-brand p { font-size: 11px; color: var(--text-sub); line-height: 1.8; margin-bottom: 18px; }
+        .social-icons { display: flex; gap: 12px; justify-content: center; }
+        @media (min-width: 768px) { .social-icons { justify-content: flex-start; } }
+        .social-icons a { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-body); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; color: var(--rose-main); text-decoration: none; font-size: 15px; }
+        .social-icons a:hover { background: var(--rose-main); color: #FFF; }
+
+        .footer-col h4 { font-size: 13px; color: var(--rose-dark); margin-bottom: 14px; font-weight: 700; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 8px; }
+        .footer-col ul li a { color: var(--text-sub); text-decoration: none; font-size: 11px; }
+
+        .footer-bottom { text-align: center; border-top: 1px solid var(--border-color); padding-top: 18px; margin-top: 35px; font-size: 10px; color: var(--text-sub); }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">✨ مرحباً بكم في Nargsa Store - التوصيل متوفر لجميع المحافظات العراقية ✨</div>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="header-container">
+            <div class="header-icons">
+                <i class="fa-solid fa-sliders" onclick="openAdminModal()" title="لوحة التحكم بالمنتجات"></i>
+            </div>
+
+            <div class="logo-box" onclick="filterCategory('الكل')">
+                <div class="logo-text">
+                    <h1>Nargsa</h1>
+                    <span>STORE</span>
+                </div>
+            </div>
+
+            <div class="header-icons">
+                <div class="cart-icon-wrap" onclick="toggleCartModal()">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="badge" id="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-search-bar">
+            <input type="text" class="search-input" placeholder="ابحثي في Nargsa Store..." oninput="handleSearch(this.value)">
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div>
+            <div style="font-size: 11px; color: var(--rose-main); margin-bottom: 6px; letter-spacing: 2px;">أهلاً بكِ في ✦</div>
+            <div class="hero-title">NARGSA STORE</div>
+            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 18px;">منتجات حصرية وبأعلى جودة مصممة خصيصاً لكِ</p>
+            <button class="btn-shop" onclick="scrollToProducts()">تصفحي المنتجات</button>
+        </div>
+    </section>
+
+    <!-- Dynamic Categories Grid -->
+    <section class="categories-section">
+        <div class="categories-grid">
+            <div class="category-item active" onclick="filterCategory('الكل', this)">
+                <div class="category-icon"><i class="fa-solid fa-border-all"></i></div>
+                <span class="category-name">الكل</span>
+            </div>
+            <div class="category-item" onclick="filterCategory('عطور', this)">
+                <div class="category-icon"><i class="fa-solid fa-spray-can"></i></div>
+                <span class="category-name">عطور</span>
+            </div>
+            <div class="category-item" onclick="filterCategory('مكياج', this)">
+                <div class="category-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <span class="category-name">مكياج</span>
+            </div>
+            <div class="category-item" onclick="filterCategory('عناية', this)">
+                <div class="category-icon"><i class="fa-solid fa-pump-soap"></i></div>
+                <span class="category-name">عناية</span>
+            </div>
+            <div class="category-item" onclick="filterCategory('ايس كوفي', this)">
+                <div class="category-icon"><i class="fa-solid fa-glass-water"></i></div>
+                <span class="category-name">ايس كوفي</span>
+            </div>
+            <div class="category-item" onclick="filterCategory('بوكسات', this)">
+                <div class="category-icon"><i class="fa-solid fa-gift"></i></div>
+                <span class="category-name">بوكسات</span>
+            </div>
+            <div class="category-item" onclick="filterCategory('قاصات', this)">
+                <div class="category-icon"><i class="fa-solid fa-piggy-bank"></i></div>
+                <span class="category-name">قاصات</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Showcase Grid -->
+    <section class="products-section" id="products-sec">
+        <div class="products-grid" id="products-container"></div>
+    </section>
+
+    <!-- Modal: تفاصيل المنتج السريعة (Quick View) -->
+    <div class="modal-overlay" id="product-detail-modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('product-detail-modal')">&times;</span>
+            <div id="detail-content" style="text-align:center;"></div>
+        </div>
+    </div>
+
+    <!-- Modal: إضافة أو تعديل منتج (لوحة الإدارة) -->
+    <div class="modal-overlay" id="admin-modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('admin-modal')">&times;</span>
+            <h3 id="admin-modal-title" style="text-align:center; color:var(--rose-dark); margin-bottom:18px;">إدارة المنتجات</h3>
+            
+            <input type="hidden" id="edit-product-id">
+
+            <div class="form-group">
+                <label>رمز الدخول للمشرف</label>
+                <input type="password" id="admin-pass" placeholder="أدخل رمز الأدمن للتحقق...">
+            </div>
+            <div class="form-group">
+                <label>اسم المنتج</label>
+                <input type="text" id="add-p-name" placeholder="اسم المنتج">
+            </div>
+            <div class="form-group">
+                <label>السعر (بالدينار العراقي)</label>
+                <input type="number" id="add-p-price" placeholder="مثال: 25000">
+            </div>
+            <div class="form-group">
+                <label>القسم</label>
+                <select id="add-p-cat">
+                    <option value="عطور">عطور</option>
+                    <option value="مكياج">مكياج</option>
+                    <option value="عناية">عناية</option>
+                    <option value="ايس كوفي">ايس كوفي</option>
+                    <option value="بوكسات">بوكسات</option>
+                    <option value="قاصات">قاصات</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>صورة المنتج (من الاستديو) 📷</label>
+                <input type="file" id="add-p-file" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>فيديو المنتج (من الاستديو - اختياري) 🎬</label>
+                <input type="file" id="add-p-video-file" accept="video/*">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button onclick="saveProduct()" style="flex:1; background:var(--rose-main); color:#FFF; border:none; padding:12px; font-weight:bold; cursor:pointer; font-size:12px; border-radius:10px;">حفظ المنتج</button>
+                <button id="btn-delete-prod" onclick="deleteCurrentProduct()" style="display:none; background:#d9534f; color:#FFF; border:none; padding:12px 18px; font-weight:bold; cursor:pointer; font-size:12px; border-radius:10px;">حذف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: حقيبة التسوق واستكمال الطلب -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-box">
+            <span class="close-modal" onclick="closeModal('cart-modal')">&times;</span>
+            <h3 style="text-align:center; color:var(--rose-dark); margin-bottom:18px; font-family:'Cinzel', serif;">حقيبة التسوق</h3>
+            <div id="cart-items" style="max-height:180px; overflow-y:auto; margin-bottom:15px; font-size:12px;"></div>
+            
+            <div class="form-group">
+                <input type="text" id="cust-name" placeholder="الاسم الكامل">
+            </div>
+            <div class="form-group">
+                <input type="text" id="cust-phone" placeholder="رقم الهاتف للتواصل">
+            </div>
+            <div class="form-group">
+                <select id="cust-city">
+                    <option value="3000">بغداد (توصيل: 3,000 د.ع)</option>
+                    <option value="5000">كافة المحافظات (توصيل: 5,000 د.ع)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="text" id="cust-address" placeholder="العنوان التفصيلي (المحافظة / المنطقة)">
+            </div>
+
+            <button onclick="sendCartToWhatsApp()" style="background:#25D366; color:#FFF; border:none; padding:12px; width:100%; font-weight:bold; cursor:pointer; font-size:12px; border-radius:10px;"><i class="fa-brands fa-whatsapp"></i> تأكيد وإرسال الطلب عبر الواتساب</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h2>Nargsa Store</h2>
+                <p>وجهتكِ الأولى للرقي، الجمال، والمنتجات الحصرية المصممة لتلبي أرقى الأذواق بأفضل جودة.</p>
+                <div class="social-icons">
+                    <a href="https://wa.me/9647728013065" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>خدمة العملاء</h4>
+                <ul>
+                    <li><a href="#">متابعة الطلب</a></li>
+                    <li><a href="#">سياسة الشحن والتوصيل</a></li>
+                    <li><a href="#">الدعم الفني المباشر</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="#">عن المتجر</a></li>
+                    <li><a href="#">الشروط والأحكام</a></li>
+                    <li><a href="#">سياسة الاستبدال</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            جميع الحقوق محفوظة © Nargsa Store 2026
+        </div>
+    </footer>
+
+    <!-- JavaScript logic -->
+    <script>
+        const defaultProducts = [
+            { id: '1', name: 'عطر نرجس الملكي', price: 25000, category: 'عطور', image_url: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=400', video_url: '' },
+            { id: '2', name: 'كوب ايس كوفي زجاجي', price: 10000, category: 'ايس كوفي', image_url: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=400', video_url: '' },
+            { id: '3', name: 'أحمر شفاه فاخر', price: 8000, category: 'مكياج', image_url: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=400', video_url: '' }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('nargsa_products')) || defaultProducts;
+        let cart = JSON.parse(localStorage.getItem('nargsa_cart')) || [];
+        let currentCategory = 'الكل';
+        let searchQuery = '';
+
+        window.onload = () => {
+            renderProducts();
+            updateCartCount();
+        };
+
+        function renderProducts() {
+            let list = currentCategory === 'الكل' ? [...products] : products.filter(p => p.category === currentCategory);
+            if (searchQuery) list = list.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+            const container = document.getElementById('products-container');
+            container.innerHTML = '';
+
+            if (list.length === 0) {
+                container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-sub); font-size:13px;">لا توجد منتجات مطابقة في هذا القسم حالياً.</div>';
+                return;
+            }
+
+            list.forEach(prod => {
+                const videoTag = prod.video_url ? `<span class="video-badge"><i class="fa-solid fa-play"></i> فيديو</span>` : '';
+                container.innerHTML += `
+                    <div class="product-card">
+                        <div class="product-img-wrap" onclick="openProductDetail('${prod.id}')">
+                            <span class="product-badge">${prod.category}</span>
+                            ${videoTag}
+                            <img src="${prod.image_url}" class="product-img" alt="${prod.name}">
+                        </div>
+                        <div class="product-name" onclick="openProductDetail('${prod.id}')">${prod.name}</div>
+                        <div class="product-price">${Number(prod.price).toLocaleString()} د.ع</div>
+                        <div class="card-actions">
+                            <button class="btn-add-cart" onclick="addToCart('${prod.id}')"><i class="fa-solid fa-bag-shopping"></i> أضيفي للسلة</button>
+                            <button class="btn-edit-prod" onclick="openEditProduct('${prod.id}')" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterCategory(cat, el) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            if(el) el.classList.add('active');
+            renderProducts();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val;
+            renderProducts();
+        }
+
+        function addToCart(id, qty = 1) {
+            const prod = products.find(p => p.id == id);
+            const existing = cart.find(i => i.id == id);
+            if (existing) existing.qty += qty; else cart.push({ ...prod, qty: qty });
+            localStorage.setItem('nargsa_cart', JSON.stringify(cart));
+            updateCartCount();
+            alert('✨ تمت إضافة المنتج بنجاح لحقيبة التسوق!');
+        }
+
+        function updateCartCount() {
+            document.getElementById('cart-count').innerText = cart.reduce((a, b) => a + b.qty, 0);
+        }
+
+        function openProductDetail(id) {
+            const prod = products.find(p => p.id == id);
+            if (!prod) return;
+
+            const mediaHTML = prod.video_url 
+                ? `<video src="${prod.video_url}" autoplay loop muted playsinline controls style="width:100%; height:240px; object-fit:cover; border-radius:14px; margin-bottom:15px;"></video>`
+                : `<img src="${prod.image_url}" style="width:100%; height:240px; object-fit:cover; border-radius:14px; margin-bottom:15px;">`;
+
+            const detailBox = document.getElementById('detail-content');
+            detailBox.innerHTML = `
+                <div style="width:100%; border-radius:14px; overflow:hidden;">
+                    ${mediaHTML}
+                </div>
+                <div style="font-size:10px; color:var(--rose-main); font-weight:bold; letter-spacing:1px; margin-bottom:5px;">✦ ${prod.category.toUpperCase()}</div>
+                <h2 style="font-size:17px; color:var(--rose-dark); margin-bottom:8px;">${prod.name}</h2>
+                <div style="font-size:16px; font-weight:800; color:var(--rose-main); margin-bottom:15px;">${Number(prod.price).toLocaleString()} د.ع</div>
+                <p style="font-size:11px; color:var(--text-sub); line-height:1.6; margin-bottom:20px;">منتج حصري ومميز متوفر الآن في Nargsa Store.</p>
+                <button onclick="addToCart('${prod.id}'); closeModal('product-detail-modal');" style="background:var(--rose-main); color:#FFF; border:none; padding:12px; width:100%; font-weight:bold; font-size:12px; border-radius:10px; cursor:pointer;"><i class="fa-solid fa-bag-shopping"></i> إضافة إلى الحقيبة الآن</button>
+            `;
+            document.getElementById('product-detail-modal').classList.add('active');
+        }
+
+        function openAdminModal() {
+            document.getElementById('admin-modal-title').innerText = 'إضافة منتج جديد';
+            document.getElementById('edit-product-id').value = '';
+            document.getElementById('btn-delete-prod').style.display = 'none';
+            document.getElementById('add-p-name').value = '';
+            document.getElementById('add-p-price').value = '';
+            document.getElementById('add-p-file').value = '';
+            document.getElementById('add-p-video-file').value = '';
+            document.getElementById('admin-modal').classList.add('active');
+        }
+
+        function openEditProduct(id) {
+            const prod = products.find(p => p.id == id);
+            if (!prod) return;
+
+            document.getElementById('admin-modal-title').innerText = 'تعديل المنتج الحالي';
+            document.getElementById('edit-product-id').value = prod.id;
+            document.getElementById('add-p-name').value = prod.name;
+            document.getElementById('add-p-price').value = prod.price;
+            document.getElementById('add-p-cat').value = prod.category;
+            document.getElementById('btn-delete-prod').style.display = 'block';
+            document.getElementById('admin-modal').classList.add('active');
+        }
+
+        function saveProduct() {
+            const pass = document.getElementById('admin-pass').value;
+            const editId = document.getElementById('edit-product-id').value;
+            const name = document.getElementById('add-p-name').value;
+            const price = document.getElementById('add-p-price').value;
+            const category = document.getElementById('add-p-cat').value;
+            const imgFile = document.getElementById('add-p-file').files[0];
+            const videoFile = document.getElementById('add-p-video-file').files[0];
+
+            if (pass !== '7890') {
+                alert('رمز الدخول غير صحيح!');
+                return;
+            }
+
+            if (!name || !price) {
+                alert('يرجى ملء الاسم والسعر على الأقل.');
+                return;
+            }
+
+            const readMedia = (file) => {
+                return new Promise((resolve) => {
+                    if (!file) resolve(null);
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            Promise.all([readMedia(imgFile), readMedia(videoFile)]).then(([imgUrl, videoUrl]) => {
+                if (editId) {
+                    const index = products.findIndex(p => p.id == editId);
+                    if (index !== -1) {
+                        products[index].name = name;
+                        products[index].price = Number(price);
+                        products[index].category = category;
+                        if (imgUrl) products[index].image_url = imgUrl;
+                        if (videoUrl) products[index].video_url = videoUrl;
+                    }
+                } else {
+                    if (!imgUrl) { alert('يرجى اختيار صورة للمنتج من الاستديو'); return; }
+                    products.unshift({
+                        id: Date.now().toString(),
+                        name: name,
+                        price: Number(price),
+                        category: category,
+                        image_url: imgUrl,
+                        video_url: videoUrl || ''
+                    });
+                }
+
+                localStorage.setItem('nargsa_products', JSON.stringify(products));
+                renderProducts();
+                closeModal('admin-modal');
+                alert('✨ تم حفظ البيانات والوسائط بنجاح!');
+            });
+        }
+
+        function deleteCurrentProduct() {
+            const pass = document.getElementById('admin-pass').value;
+            const editId = document.getElementById('edit-product-id').value;
+
+            if (pass !== '7890') { alert('رمز الدخول غير صحيح'); return; }
+            if (!confirm('هل انت متأكد من حذف هذا المنتج؟')) return;
+
+            products = products.filter(p => p.id != editId);
+            localStorage.setItem('nargsa_products', JSON.stringify(products));
+            renderProducts();
+            closeModal('admin-modal');
+            alert('تم حذف المنتج بنجاح.');
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cart-modal');
+            modal.classList.toggle('active');
+            if (modal.classList.contains('active')) renderCartItems();
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cart-items');
+            if (cart.length === 0) { container.innerHTML = '<p style="text-align:center; color:var(--text-sub);">حقيبة التسوق فارغة حالياً</p>'; return; }
+            container.innerHTML = cart.map(i => `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:6px;">
+                    <div>
+                        <div style="font-weight:600;">${i.name}</div>
+                        <div style="font-size:10px; color:var(--text-sub);">الكمية: ${i.qty}</div>
+                    </div>
+                    <div style="font-weight:700; color:var(--rose-main);">${Number(i.price * i.qty).toLocaleString()} د.ع</div>
+                </div>
+            `).join('');
+        }
+
+        function sendCartToWhatsApp() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const deliveryFee = Number(document.getElementById('cust-city').value);
+            const address = document.getElementById('cust-address').value;
+
+            if(!name || !phone || !address) { alert('يرجى كتابة كافة بيانات التسليم'); return; }
+            if(cart.length === 0) { alert('الحقيبة فارغة'); return; }
+
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let total = subtotal + deliveryFee;
+
+            let msg = `✨ *طلب جديد من متجر Nargsa Store* ✨\n\n`;
+            msg += `👤 *الاسم:* ${name}\n📞 *الهاتف:* ${phone}\n📍 *العنوان:* ${address}\n\n🛍️ *المنتجات المطلوبة:*\n`;
+            cart.forEach(i => { msg += `- ${i.name} (${i.qty}x) -> ${Number(i.price * i.qty).toLocaleString()} د.ع\n`; });
+            msg += `\n💵 *المجموع الفرعي:* ${subtotal.toLocaleString()} د.ع\n🚚 *التوصيل:* ${deliveryFee.toLocaleString()} د.ع\n🌟 *الإجمالي الكلي:* ${total.toLocaleString()} د.ع`;
+
+            window.open(`https://wa.me/9647728013065?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function scrollToProducts() {
+            document.getElementById('products-sec').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        };
+    </script>
+</body>
+</html>
